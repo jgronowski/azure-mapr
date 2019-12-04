@@ -1,0 +1,3 @@
+# Preparation for partition
+- import_playbook: sites/common.yml
+

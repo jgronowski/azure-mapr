@@ -1,0 +1,55 @@
+- name: Create a new primary partition for LVM
+  parted:
+    device: /dev/sda
+    number: 3
+    flags: [ lvm ]
+    state: present
+- name: Create Logical Volume Group
+  lvg:
+    vg: rootvg
+    pvs: /dev/sda3
+- name: Create OptMapr Volume
+  lvol:
+    vg: rootvg
+    lv: optmapr
+    size: 128G
+- name: Create File System for Mapr Volume
+  filesystem:
+    fstype: xfs
+    dev: /dev/mapper/rootvg-optmapr
+- name: Mount File System for Mapr Volume
+  mount:
+    path: /opt/mapr
+    src: /dev/mapper/rootvg-optmapr
+    fstype: xfs
+    opts: defaults
+    state: mounted
+- name: Create OptZkNode Volume
+  lvol:
+    vg: rootvg
+    lv: optzknode
+    size: 10G
+  when: inventory_hostname in groups['ansible']
+  #with_items: "{{ groups[ansible] }}"
+- name: Create File System for Mapr Volume
+  filesystem:
+    fstype: xfs
+    dev: /dev/mapper/rootvg-optzknode
+  when: inventory_hostname in groups['ansible']
+  #with_items: "{{ groups[ansible] }}"
+- name: Mount File System for Zookeeper Volume
+  mount:
+    path: /opt/mapr/zkdata
+    src: /dev/mapper/rootvg-optzknode
+    fstype: xfs
+    opts: defaults
+    state: mounted
+  when: inventory_hostname in groups['ansible']
+  #with_items: "{{ groups[ansible] }}"
+- name: Resize tmp partition
+  lvol:
+    vg: rootvg
+    lv: tmp
+    size: 12G
+    resizefs: true
+    force: yes  

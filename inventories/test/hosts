@@ -1,0 +1,12 @@
+[ansible]
+ansible
+[all]
+data01
+data02
+data03
+data04
+data05
+managment01
+managment02
+managment03
+managment04
