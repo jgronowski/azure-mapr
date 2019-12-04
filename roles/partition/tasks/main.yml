@@ -30,13 +30,11 @@
     lv: optzknode
     size: 10G
   when: inventory_hostname in groups['ansible']
-  #with_items: "{{ groups[ansible] }}"
 - name: Create File System for Mapr Volume
   filesystem:
     fstype: xfs
     dev: /dev/mapper/rootvg-optzknode
   when: inventory_hostname in groups['ansible']
-  #with_items: "{{ groups[ansible] }}"
 - name: Mount File System for Zookeeper Volume
   mount:
     path: /opt/mapr/zkdata
@@ -45,7 +43,6 @@
     opts: defaults
     state: mounted
   when: inventory_hostname in groups['ansible']
-  #with_items: "{{ groups[ansible] }}"
 - name: Resize tmp partition
   lvol:
     vg: rootvg
